@@ -1,5 +1,7 @@
 using System.Collections;
+using Controller.Bullet;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Controller
 {
@@ -9,7 +11,7 @@ namespace Controller
         public string targetGroupTag;
         
         [Header("Bullet Settings")]
-        public BulletController bulletObject;
+        public BulletBase bulletObject;
         public Vector3 bulletSpawnPoint;
         [Range(10.0f, 2000.0f)]
         public float bulletSpeed;
@@ -48,11 +50,11 @@ namespace Controller
         {
             var spawnPoint = transform.position + bulletSpawnPoint;
             var position = target.GetComponent<Collider>().bounds.center;
-            var toTarget = position - spawnPoint ;
+            var toTarget = position - spawnPoint;
             
             var timeToTarget = toTarget.magnitude / bulletSpeed;
             
-            var targetPosition = position + target.GetComponent<Rigidbody>().velocity * timeToTarget;
+            var targetPosition = position + target.GetComponent<Rigidbody>().velocity  * timeToTarget;
             
             var displacement = targetPosition - spawnPoint;
             
@@ -60,6 +62,7 @@ namespace Controller
             var bulletRb = bullet.GetComponent<Rigidbody>();
             
             var velocity = Vector3.Normalize(displacement) * bulletSpeed;
+            velocity.y = (displacement.y + 0.5f * Physics.gravity.y * timeToTarget * timeToTarget) / timeToTarget;
             bulletRb.velocity = velocity;
             
             var bulletRotation = Quaternion.LookRotation(velocity);

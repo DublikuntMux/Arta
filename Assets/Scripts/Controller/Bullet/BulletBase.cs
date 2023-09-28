@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Controller
+namespace Controller.Bullet
 {
-    [RequireComponent(typeof(LineRenderer))]
-    public class BulletController: MonoBehaviour
+    public abstract class BulletBase: MonoBehaviour
     {
         [Header("Target Settings")]
         public string targetTag;
@@ -19,14 +18,12 @@ namespace Controller
         [Range(10.0f, 60.0f)]
         public float despawnTime = 15.0f;
         
-        [Header("SFX")]
-        public AudioClip[] explosionSound;
-        public GameObject[] explosionParticle;
-        public SfxController sfxObject;
         
         private LineRenderer _lineRenderer;
         
         private List<Vector3> _linePositions;
+
+        public abstract void BeforeDestroy();
 
         private void Start()
         {
@@ -59,23 +56,7 @@ namespace Controller
         {
             if (!collision.gameObject.CompareTag(targetTag)) return;
             
-            if (explosionSound.Length > 0)
-            {
-                var sfx = Instantiate(sfxObject, gameObject.transform.position, Quaternion.identity);
-                var randomSound = Random.Range(0, explosionSound.Length);
-                
-                sfx.audio.clip = explosionSound[randomSound];
-                sfx.audio.Play();
-            }
-
-            if (explosionParticle.Length > 0)
-            {
-                var randomParticle = Random.Range(0, explosionParticle.Length);
-                var particleSystemInstance = Instantiate(explosionParticle[randomParticle], gameObject.transform.position, Quaternion.identity);
-                
-                var particle = particleSystemInstance.GetComponent<ParticleSystem>();
-                particle.Play();
-            }
+            BeforeDestroy();
             
             Destroy(collision.gameObject);
             Destroy(gameObject);
