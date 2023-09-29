@@ -9,9 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4029440507835625218}
-  - component: {fileID: 6441971313155684950}
-  - component: {fileID: 6014440538742370479}
-  - component: {fileID: 7481351847396006327}
   - component: {fileID: 305038972522785320}
   m_Layer: 0
   m_Name: AirPlan
@@ -36,72 +33,6 @@ Transform:
   - {fileID: 5157719090334779612}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6441971313155684950
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 783869255638421166}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a3802fd3988ff8b4fa3c5300f2d4c7ae, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  targetPoint: {x: 390, y: 66, z: 152}
-  moveSpeed: 50
-  randomSound:
-  - {fileID: 8300000, guid: d3f7e291deb7e2844ab28391f1d4b132, type: 3}
-  - {fileID: 8300000, guid: f93889a5181a5ef44ae95f732ae8210d, type: 3}
-  - {fileID: 8300000, guid: 869f6b6ff39c5a74d8508f538e23fddd, type: 3}
---- !u!65 &6014440538742370479
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 783869255638421166}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 28.26, y: 5.47, z: 20.8}
-  m_Center: {x: 0, y: 3, z: 0}
---- !u!54 &7481351847396006327
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 783869255638421166}
-  serializedVersion: 4
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 0
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 112
-  m_CollisionDetection: 0
 --- !u!82 &305038972522785320
 AudioSource:
   m_ObjectHideFlags: 0
