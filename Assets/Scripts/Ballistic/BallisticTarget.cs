@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class BallisticTarget : MonoBehaviour
 {
-    static public Vector3 startPosition = new Vector3(10, 8, 8);
-    static public Vector3 initialVelocity = new Vector3(-3, 1, 1);
-    static public Vector3 size = new Vector3(2.5f, 0.5f, 0.5f);
-    static public float acceleration = 1;
+    static public Vector3 startPosition;
+    static public Vector3 initialVelocity;
+    static public Vector3 size;
+    static public float acceleration;
     static public float mass;
 
     private SceneController controller;

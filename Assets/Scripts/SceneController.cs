@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SceneController : MonoBehaviour
 {
-    static public float gravityAcceleration = 3f;
+    static public float gravityAcceleration;
 
     public bool isShowingSimulation {get; private set;}
     public float simulationTime {get; private set;}

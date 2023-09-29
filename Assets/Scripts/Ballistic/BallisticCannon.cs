@@ -30,10 +30,10 @@ class BallisticInterceptionResult {
 
 public class BallisticCannon : MonoBehaviour
 {
-    static public float projectileSpeed = 7;
+    static public float projectileSpeed;
     static public float projectileMass;
-    static public Vector2 initialAngle = new Vector2(0, 0);
-    static public Vector2 rotationSpeed = new Vector2(0.5f, 0.5f);
+    static public Vector2 initialAngle;
+    static public Vector2 rotationSpeed;
 
     public BallisticInterceptor interceptorPrefab;
     // public GameObject particlePrefab;
