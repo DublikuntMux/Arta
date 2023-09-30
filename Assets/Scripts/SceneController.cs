@@ -1,10 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class SceneController : MonoBehaviour
 {
     static public float gravityAcceleration;
+
+    public TMP_Text pausedText;
 
     public bool isShowingSimulation {get; private set;}
     public float simulationTime {get; private set;}
@@ -26,8 +29,15 @@ public class SceneController : MonoBehaviour
     void Update()
     {
         if (!isShowingSimulation) {
-            if (isReadyToRun && (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return))) isShowingSimulation = true;
+            if (isReadyToRun && (Input.GetKeyDown(KeyCode.Space))) {
+                isShowingSimulation = true;
+                pausedText.text = "";
+            }
             else return;
+        } else if (Input.GetKeyDown(KeyCode.Space)) {
+            isShowingSimulation = false;
+            pausedText.text = "Paused";
+            return;
         }
         simulationTime += Time.deltaTime;
         if (simulationTime >= collisionTime) {
