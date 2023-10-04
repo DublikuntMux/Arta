@@ -13,12 +13,18 @@ public class SceneController : MonoBehaviour
     public float simulationTime {get; private set;}
     public float collisionTime {get; private set;}
 
+    private float timeScale;
     private bool isReadyToRun;
 
     public void startSimulation(float collisionTime)
     {
         this.collisionTime = collisionTime;
         isReadyToRun = true;
+    }
+
+    public void setTimeScale(float timeScale)
+    {
+        this.timeScale = timeScale;
     }
 
     void Start()
@@ -39,7 +45,7 @@ public class SceneController : MonoBehaviour
             pausedText.text = "Paused";
             return;
         }
-        simulationTime += Time.deltaTime;
+        simulationTime += Time.deltaTime * timeScale;
         if (simulationTime >= collisionTime) {
             simulationTime = collisionTime;
             isShowingSimulation = false;

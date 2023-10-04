@@ -11,7 +11,19 @@ public class CameraController : MonoBehaviour
     public float maxRotationY = 60f;
     public float panningSpeed = 10f;
     public float zoomSpeed = 140f;
-    float rotationY;
+    
+    private float rotationY;
+    private bool panningAllowed;
+
+    public void onPointerDownOnSlider()
+    {
+        panningAllowed = false;
+    }
+
+    public void onPointerUpOnSlider()
+    {
+        panningAllowed = true;
+    }
 
     void Start()
     {
@@ -40,6 +52,7 @@ public class CameraController : MonoBehaviour
 
     void mouseLeftButtonClicked()
     {
+        if (!panningAllowed) return;
         Vector3 horizontalDirection = Quaternion.Euler(0, 90, 0) *
             new Vector3(transform.forward.x, 0, transform.forward.z).normalized;
         transform.position += horizontalDirection * Input.GetAxis("Mouse X") * panningSpeed;
