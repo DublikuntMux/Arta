@@ -134,7 +134,7 @@ public class BallisticCannon : MonoBehaviour
                 angleX = angleY = 0f;
                 delta *= stepFactor;
             }
-            while (angleY <= 180f && iterations++ < iterationsPerFrame) {
+            while (angleY <= 90f && iterations++ < iterationsPerFrame) {
                 float rotationTime = Mathf.Max(angleX / 360f / rotationSpeed.x, angleY / 360f / rotationSpeed.y);
                 Vector3 velocity = getCannonDirection(angleX, angleY) * projectileSpeed;
                 float? time = getTimeToCollideOnX(velocity, rotationTime);
