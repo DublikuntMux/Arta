@@ -1740,8 +1740,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   interceptorPrefab: {fileID: 7840033409160870766, guid: bf75c2fa12a18e942892d379b11a25d7,
     type: 3}
+  terrain: {fileID: 492575397}
   stepFactor: 1
-  iterationsPerFrame: 4000
+  iterationsPerFrame: 10000
+  crushCheckTimeDelta: 0.1
 --- !u!1 &7695712842760107009
 GameObject:
   m_ObjectHideFlags: 0

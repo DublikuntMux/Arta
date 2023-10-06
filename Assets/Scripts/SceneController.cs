@@ -13,7 +13,7 @@ public class SceneController : MonoBehaviour
     public float simulationTime {get; private set;}
     public float collisionTime {get; private set;}
 
-    private float timeScale;
+    private float timeScale = 1f;
     private bool isReadyToRun;
 
     public void startSimulation(float collisionTime)
