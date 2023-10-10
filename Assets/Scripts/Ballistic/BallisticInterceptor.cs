@@ -8,6 +8,7 @@ public class BallisticInterceptor : MonoBehaviour
     public float mass;
 
     public float launchOffset;
+    public float endTime;
 
     private SceneController controller;
     private LineRenderer lineRenderer;
@@ -21,9 +22,10 @@ public class BallisticInterceptor : MonoBehaviour
 
     void Update()
     {
+        float time = controller.simulationTime < endTime ? controller.simulationTime : endTime;
         lineRenderer.SetPosition(lineRenderer.positionCount++, transform.position);
         Vector3 acceleration = SceneController.gravityAcceleration * Vector3.down;
-        transform.position = velocity * (controller.simulationTime - launchOffset) +
-            acceleration * Mathf.Pow(controller.simulationTime - launchOffset, 2) / 2;
+        transform.position = velocity * (time - launchOffset) +
+            acceleration * Mathf.Pow(time - launchOffset, 2) / 2;
     }
 }
