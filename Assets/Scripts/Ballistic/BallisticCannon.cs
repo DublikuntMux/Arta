@@ -3,22 +3,25 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-class BallisticInterceptionResult {
+public class BallisticInterceptionResult {
     public bool isInercepted = false;
+    public BallisticTarget target;
     public float delta;
     public Vector2 rotation;
-    public float rotationTime = 0f;
+    public float rotationTime;
     public Vector3 velocity;
     public float time;
 
-    public BallisticInterceptionResult(float delta, float rotationX, float rotationY)
+    public BallisticInterceptionResult(BallisticTarget target, float delta, float rotationX, float rotationY)
     {
+        this.target = target;
         this.delta = delta;
         rotation = new Vector2(rotationX, rotationY);
     }
-    public BallisticInterceptionResult(float delta, float rotationX, float rotationY, float rotationTime, Vector3 velocity, float time)
+    public BallisticInterceptionResult(BallisticTarget target, float delta, float rotationX, float rotationY, float rotationTime, Vector3 velocity, float time)
     {
         this.isInercepted = true;
+        this.target = target;
         this.delta = delta;
         rotation = new Vector2(rotationX, rotationY);
         this.rotationTime = rotationTime;
@@ -30,30 +33,30 @@ class BallisticInterceptionResult {
 
 public class BallisticCannon : MonoBehaviour
 {
-    static public float projectileSpeed;
-    static public float projectileMass;
-    static public Vector2 initialAngle;
-    static public Vector2 rotationSpeed;
+    public float projectileSpeed;
+    public float projectileMass;
+    public Vector2 initialAngle;
+    public Vector2 rotationSpeed;
 
     public BallisticInterceptor interceptorPrefab;
     // public GameObject particlePrefab;
-    public Terrain terrain;
     public float stepFactor;
     public int iterationsPerFrame;
     public float crushCheckTimeDelta;
 
     private SceneController controller;
     private BallisticInterceptionResult calculationResult;
-    private bool hasInterceptorBeenSent;
+    private List<BallisticInterceptionResult> interceptions = new List<BallisticInterceptionResult>();
+    private Terrain terrain;
+    private int interceptorCount;
     
     void Start()
     {
         controller = GameObject.FindFirstObjectByType<SceneController>();
-        calculationResult = new BallisticInterceptionResult(1, 0, 0);
+        terrain = GameObject.FindFirstObjectByType<Terrain>();
+        calculationResult = new BallisticInterceptionResult(null, 1, 0, 0);
         Vector3 angles = transform.rotation.eulerAngles;
         transform.localRotation = convertRotation(initialAngle);
-
-        handleCalculations();
     }
 
     Vector3 getCannonDirection(float angleX, float angleY)
@@ -75,29 +78,31 @@ public class BallisticCannon : MonoBehaviour
         return transform.position + velocity * time + gravitationalDelta * Vector3.down;
     }
 
-    float? getTimeToCollideOnX(Vector3 velocity, float rotationTime)
+    float? getTimeToCollideOnX(Vector3 velocity, float rotationTime, BallisticTarget target)
     {
         // B and c coefficient are reffering to the standard form of a quadratic
-        float b_coef = BallisticTarget.initialVelocity.x - velocity.x;
-        float c_coef = BallisticTarget.startPosition.x - transform.position.x + velocity.x * rotationTime;
-        float acceleration = BallisticTarget.initialVelocity.normalized.x * BallisticTarget.acceleration;
-        if (acceleration == 0) // To avoid division by zero
-            return -c_coef / b_coef;
-        else {
+        float b_coef = target.initialVelocity.x - velocity.x;
+        float c_coef = target.startPosition.x - transform.position.x + velocity.x * rotationTime;
+        float acceleration = target.initialVelocity.normalized.x * target.acceleration;
+        // Debug.Log(new Vector3(b_coef, c_coef, acceleration));
+        if (acceleration == 0) { // To avoid division by zero
+            if (b_coef < 0) return -c_coef / b_coef;
+        } else {
             // Solving a quadratic equation x_{t0} + v_tt + (1/2)at^2 = x_{i0} + v_i(t - t_r)
-            float temp = Mathf.Pow(b_coef, 2) - 2 * acceleration * c_coef; 
+            float temp = Mathf.Pow(b_coef, 2) - 2 * acceleration * c_coef;
             if (temp < 0) return null; // Square root of a negative number
+            float tempsqrt = Mathf.Sqrt(temp);
 
-            float solution1 = -(b_coef - Mathf.Sqrt(temp)) / acceleration;
+            float solution1 = -(b_coef - tempsqrt) / acceleration;
             if (solution1 >= 0) return solution1;
-            float solution2 = -(b_coef + Mathf.Sqrt(temp)) / acceleration;
+            float solution2 = -(b_coef + tempsqrt) / acceleration;
             if (solution2 >= 0) return solution2;
-            
-            return null; // No non-negative real solution
+            // Debug.Log(new Vector2(solution1, solution2));
         }
+        return null; // No non-negative real solution
     }
 
-    bool willCrushBeforeInterception(float time, float rotationTime, Vector3 velocity)
+    bool willCrushBeforeInterception(float time, float rotationTime, Vector3 velocity, BallisticTarget target)
     {
         for (float currTime = 0; currTime <= time; currTime += crushCheckTimeDelta) {
             if (currTime > rotationTime) {
@@ -105,8 +110,8 @@ public class BallisticCannon : MonoBehaviour
                 if (interceptorPosition.y <= terrain.SampleHeight(interceptorPosition) + terrain.gameObject.transform.position.y)
                     return true;
             }
-            Vector3 targetAcceleration = BallisticTarget.initialVelocity.normalized * BallisticTarget.acceleration + Vector3.down * SceneController.gravityAcceleration;
-            Vector3 targetPosition = BallisticTarget.startPosition + BallisticTarget.initialVelocity * currTime +
+            Vector3 targetAcceleration = target.initialVelocity.normalized * target.acceleration + Vector3.down * SceneController.gravityAcceleration;
+            Vector3 targetPosition = target.startPosition + target.initialVelocity * currTime +
                 targetAcceleration * Mathf.Pow(currTime, 2) / 2;
             if (targetPosition.y <= terrain.SampleHeight(targetPosition) + terrain.gameObject.transform.position.y)
                 return true;
@@ -114,18 +119,17 @@ public class BallisticCannon : MonoBehaviour
         return false;
     }
 
-    bool isInterceptingAt(Vector3 point, float time)
+    bool isInterceptingAt(Vector3 point, float time, BallisticTarget target)
     {
-        float acceleration = BallisticTarget.initialVelocity.normalized.y * BallisticTarget.acceleration - SceneController.gravityAcceleration;
-        float targetY = BallisticTarget.startPosition.y + BallisticTarget.initialVelocity.y * time + acceleration * Mathf.Pow(time, 2) / 2;
-        acceleration = BallisticTarget.initialVelocity.normalized.z * BallisticTarget.acceleration;
-        float targetZ = BallisticTarget.startPosition.z + BallisticTarget.initialVelocity.z * time + acceleration * Mathf.Pow(time, 2) / 2;
-        return BallisticTarget.isInsideTheTarget(new Vector3(point.x, targetY, targetZ), point);
+        float acceleration = target.initialVelocity.normalized.y * target.acceleration - SceneController.gravityAcceleration;
+        float targetY = target.startPosition.y + target.initialVelocity.y * time + acceleration * Mathf.Pow(time, 2) / 2;
+        acceleration = target.initialVelocity.normalized.z * target.acceleration;
+        float targetZ = target.startPosition.z + target.initialVelocity.z * time + acceleration * Mathf.Pow(time, 2) / 2;
+        return target.isInsideTheTarget(new Vector3(point.x, targetY, targetZ), point);
     }
 
-    BallisticInterceptionResult findInterceptionPoint(float delta, Vector2 startRotation)
+    BallisticInterceptionResult findInterceptionPoint(float delta, Vector2 startRotation, Vector2 initialRotation, float timeOffset, BallisticTarget target)
     {
-        if (delta < 1) new BallisticInterceptionResult(delta, 0, 0);
         float angleX = startRotation.x;
         float angleY = startRotation.y;
         int iterations = 0;
@@ -135,58 +139,80 @@ public class BallisticCannon : MonoBehaviour
                 delta *= stepFactor;
             }
             while (angleY <= 90f && iterations++ < iterationsPerFrame) {
-                float rotationTime = Mathf.Max(angleX / 360f / rotationSpeed.x, angleY / 360f / rotationSpeed.y);
+                float rotationTime = Mathf.Max(
+                    Mathf.Abs(angleX - initialRotation.x) / 360f / rotationSpeed.x,
+                    Mathf.Abs(angleY - initialRotation.y) / 360f / rotationSpeed.y
+                ) + timeOffset;
                 Vector3 velocity = getCannonDirection(angleX, angleY) * projectileSpeed;
-                float? time = getTimeToCollideOnX(velocity, rotationTime);
+                // Debug.Log(new Vector2(angleX, angleY));
+                float? time = getTimeToCollideOnX(velocity, rotationTime, target);
+                // Debug.Log(time);
                 if (time == null) {
                     angleY += delta;
                     continue;
                 }
                 float gravitationalDelta = SceneController.gravityAcceleration * Mathf.Pow((float)time - rotationTime, 2) / 2;
                 Vector3 interceptorPosition = getInterceptorPositionAt((float)time - rotationTime, velocity);
-                if (isInterceptingAt(interceptorPosition, (float)time))
-                    if (!willCrushBeforeInterception((float)time, rotationTime, velocity))
-                        return new BallisticInterceptionResult(delta, angleX, angleY, rotationTime, velocity, (float)time);
+                if (isInterceptingAt(interceptorPosition, (float)time, target))
+                    if (!willCrushBeforeInterception((float)time, rotationTime, velocity, target))
+                        return new BallisticInterceptionResult(target, delta, angleX, angleY, rotationTime, velocity, (float)time);
                 angleY += delta;
             }
             angleY = 0f;
             angleX += delta;
         }
-        return new BallisticInterceptionResult(delta, angleX, angleY);
+        return new BallisticInterceptionResult(target, delta, angleX, angleY);
     }
 
-    public void launchInterceptor()
+    public void launchInterceptor(BallisticInterceptionResult interception)
     {
+        interception.target.endTime = interception.time;
         BallisticInterceptor interceptor = Instantiate(interceptorPrefab, transform.position, Quaternion.identity);
-        interceptor.velocity = calculationResult.velocity;
+        interceptor.velocity = interception.velocity;
         interceptor.mass = projectileMass;
-        interceptor.launchOffset = calculationResult.rotationTime;
+        interceptor.launchOffset = interception.rotationTime;
+        interceptor.endTime = interception.time;
         // GameObject particles = Instantiate(particlePrefab, transform.position + transform.up * -transform.localScale.y / 2, Quaternion.identity);
         // particles.transform.SetParent(gameObject.transform);
         // particles.transform.localRotation = Quaternion.Euler(90, -90, 0);
     }
 
-    void handleCalculations()
+    void handleCalculations(BallisticTarget target)
     {
         if (calculationResult.isInercepted) return;
-        calculationResult = findInterceptionPoint(calculationResult.delta, calculationResult.rotation);
-        if (calculationResult.isInercepted) controller.startSimulation(calculationResult.time);
+        float timeOffset;
+        Vector2 initialRotation;
+        if (interceptions.Count == 0) {
+            timeOffset = 0;
+            initialRotation = initialAngle;
+        }
+        else {
+            timeOffset = interceptions[interceptions.Count - 1].rotationTime;
+            initialRotation = interceptions[interceptions.Count - 1].rotation;
+        }
+        calculationResult = findInterceptionPoint(calculationResult.delta, calculationResult.rotation, initialRotation, timeOffset, target);
+        if (calculationResult.isInercepted) {
+            interceptions.Add(calculationResult);
+            Debug.Log(interceptions.Count);
+            calculationResult = new BallisticInterceptionResult(null, 1, 0, 0);
+        }
     }
 
     void Update()
     {
-        handleCalculations();
-        if (!controller.isShowingSimulation) return;
-        if (controller.simulationTime < calculationResult.rotationTime) {
-            // transform.localRotation = Quaternion.Lerp(
-            //     convertRotation(initialAngle),
-            //     convertRotation(calculationResult.rotation),
-            //     controller.simulationTime / calculationResult.rotationTime
-            // );
-        } else if (!hasInterceptorBeenSent) {
-            hasInterceptorBeenSent = true;
-            launchInterceptor();
-            // transform.localRotation = convertRotation(calculationResult.rotation);
+        if (interceptions.Count < controller.targets.Count) {
+            handleCalculations(controller.targets[interceptions.Count]);
+            if (interceptions.Count == controller.targets.Count)
+                controller.startSimulation(interceptions);
         }
+        if (!controller.isShowingSimulation || interceptorCount >= interceptions.Count) return;
+        // Not ready for multiple targets!!! 
+        // transform.localRotation = Quaternion.Lerp(
+        //     convertRotation(initialAngle),
+        //     convertRotation(calculationResult.rotation),
+        //     Mathf.Max(1, controller.simulationTime / calculationResult.rotationTime)
+        // );
+        if (controller.simulationTime >= interceptions[interceptorCount].rotationTime)
+            launchInterceptor(interceptions[interceptorCount++]);
     }
 }

@@ -5,20 +5,23 @@ using TMPro;
 
 public class SceneController : MonoBehaviour
 {
+    static public List<ISimulationObjectConfiguration> simulationObjects = new List<ISimulationObjectConfiguration>();
     static public float gravityAcceleration;
 
     public TMP_Text pausedText;
 
+    public List<BallisticTarget> targets = new List<BallisticTarget>();
+    public List<BallisticCannon> cannons = new List<BallisticCannon>();
     public bool isShowingSimulation {get; private set;}
     public float simulationTime {get; private set;}
-    public float collisionTime {get; private set;}
+    public float endTime {get; private set;}
 
     private float timeScale = 1f;
     private bool isReadyToRun;
 
-    public void startSimulation(float collisionTime)
+    public void startSimulation(List<BallisticInterceptionResult> interceptions)
     {
-        this.collisionTime = collisionTime;
+        endTime = interceptions[interceptions.Count - 1].time;
         isReadyToRun = true;
     }
 
@@ -30,6 +33,9 @@ public class SceneController : MonoBehaviour
     void Start()
     {
         simulationTime = 0;
+        foreach (ISimulationObjectConfiguration obj in simulationObjects)
+            obj.createObject(this);
+        targets = BallisticTarget.getByTargetPriority(targets);
     }
 
     void Update()
@@ -46,8 +52,8 @@ public class SceneController : MonoBehaviour
             return;
         }
         simulationTime += Time.deltaTime * timeScale;
-        if (simulationTime >= collisionTime) {
-            simulationTime = collisionTime;
+        if (simulationTime >= endTime) {
+            simulationTime = endTime;
             isShowingSimulation = false;
         }
     }
