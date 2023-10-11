@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 using TMPro;
 
@@ -9,6 +10,7 @@ public class SceneController : MonoBehaviour
     static public float gravityAcceleration;
 
     public TMP_Text pausedText;
+    public TMP_Text statsText;
 
     public List<BallisticTarget> targets = new List<BallisticTarget>();
     public List<BallisticCannon> cannons = new List<BallisticCannon>();
@@ -30,12 +32,21 @@ public class SceneController : MonoBehaviour
         this.timeScale = timeScale;
     }
 
+    public void updateStats()
+    {
+        StringBuilder sb = new();
+        for (int i = 0; i < cannons.Count; i++)
+            sb.AppendFormat("Гармата {0}: {1} снарядів\n", i + 1, cannons[i].interceptorCount);
+        statsText.text = sb.ToString();
+    }
+
     void Start()
     {
         simulationTime = 0;
         foreach (ISimulationObjectConfiguration obj in simulationObjects)
             obj.createObject(this);
         targets = BallisticTarget.getByTargetPriority(targets);
+        updateStats();
     }
 
     void Update()

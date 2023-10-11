@@ -43,12 +43,12 @@ public class BallisticCannon : MonoBehaviour
     public float stepFactor;
     public int iterationsPerFrame;
     public float crushCheckTimeDelta;
+    public int interceptorCount {get; private set;}
 
     private SceneController controller;
     private BallisticInterceptionResult calculationResult;
     private List<BallisticInterceptionResult> interceptions = new List<BallisticInterceptionResult>();
     private Terrain terrain;
-    private int interceptorCount;
     
     void Start()
     {
@@ -172,6 +172,7 @@ public class BallisticCannon : MonoBehaviour
         interceptor.mass = projectileMass;
         interceptor.launchOffset = interception.rotationTime;
         interceptor.endTime = interception.time;
+        controller.updateStats();
         // GameObject particles = Instantiate(particlePrefab, transform.position + transform.up * -transform.localScale.y / 2, Quaternion.identity);
         // particles.transform.SetParent(gameObject.transform);
         // particles.transform.localRotation = Quaternion.Euler(90, -90, 0);
