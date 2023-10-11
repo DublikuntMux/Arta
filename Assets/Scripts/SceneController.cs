@@ -35,8 +35,14 @@ public class SceneController : MonoBehaviour
     public void updateStats()
     {
         StringBuilder sb = new();
-        for (int i = 0; i < cannons.Count; i++)
-            sb.AppendFormat("Гармата {0}: {1} снарядів\n", i + 1, cannons[i].interceptorCount);
+        for (int i = 0; i < cannons.Count; i++) {
+            string projectiles;
+            int lastDigit = cannons[i].interceptorCount % 10;
+            if (lastDigit == 1) projectiles = "снаряд";
+            else if (lastDigit > 1 && lastDigit < 5) projectiles = "снаряди";
+            else projectiles = "снарядів";
+            sb.AppendFormat("Гармата {0}: {1} {2}\n", i + 1, cannons[i].interceptorCount, projectiles);
+        }
         statsText.text = sb.ToString();
     }
 
