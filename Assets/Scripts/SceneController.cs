@@ -61,8 +61,7 @@ public class SceneController : MonoBehaviour
             if (isReadyToRun && (Input.GetKeyDown(KeyCode.Space))) {
                 isShowingSimulation = true;
                 pausedText.text = "";
-            }
-            else return;
+            } else return;
         } else if (Input.GetKeyDown(KeyCode.Space)) {
             isShowingSimulation = false;
             pausedText.text = "Paused";
