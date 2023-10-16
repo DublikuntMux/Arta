@@ -68,9 +68,5 @@ public class SceneController : MonoBehaviour
             return;
         }
         simulationTime += Time.deltaTime * timeScale;
-        if (simulationTime >= endTime) {
-            simulationTime = endTime;
-            isShowingSimulation = false;
-        }
     }
 }

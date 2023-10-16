@@ -11,8 +11,9 @@ public class BallisticTarget : MonoBehaviour
     public float acceleration;
     public float mass;
 
-    public float endTime;
+    public bool hasEnded {get; private set;}
 
+    private float endTime;
     private SceneController controller;
     private LineRenderer lineRenderer;
 
@@ -46,6 +47,12 @@ public class BallisticTarget : MonoBehaviour
         return null; // No non-negative real solution
     }
 
+    public void endSimulation()
+    {
+        hasEnded = true;
+        endTime = controller.simulationTime;
+    }
+
     public bool isInsideTheTarget(Vector3 point, Vector3 targetPosition)
     {
         // Regular is point inside a cuboid collision code
@@ -64,7 +71,7 @@ public class BallisticTarget : MonoBehaviour
 
     void Update()
     {
-        float time = controller.simulationTime < endTime ? controller.simulationTime : endTime;
+        float time = hasEnded ? endTime : controller.simulationTime;
         lineRenderer.SetPosition(lineRenderer.positionCount++, transform.position);
         Vector3 finalAcceleration = acceleration * initialVelocity.normalized + SceneController.gravityAcceleration * Vector3.down;
         transform.position = startPosition + initialVelocity * time +

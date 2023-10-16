@@ -38,6 +38,10 @@ public class BallisticCannon : MonoBehaviour
     public Vector2 initialAngle;
     public Vector2 rotationSpeed;
 
+    public bool addsRemoteDetonator;
+    public float detonatorShardSpeed;
+    public float detonatorDistance;
+
     public BallisticInterceptor interceptorPrefab;
     // public GameObject particlePrefab;
     public float stepFactor;
@@ -167,12 +171,15 @@ public class BallisticCannon : MonoBehaviour
 
     public void launchInterceptor(BallisticInterceptionResult interception)
     {
-        interception.target.endTime = interception.time;
         BallisticInterceptor interceptor = Instantiate(interceptorPrefab, transform.position, Quaternion.identity);
+        interceptor.target = interception.target;
         interceptor.velocity = interception.velocity;
         interceptor.mass = projectileMass;
         interceptor.launchOffset = interception.rotationTime;
         interceptor.endTime = interception.time;
+        interceptor.hasRemoteDetonator = addsRemoteDetonator;
+        interceptor.detonatorShardSpeed = detonatorShardSpeed;
+        interceptor.detonatorDistance = detonatorDistance;
         controller.updateStats();
         // GameObject particles = Instantiate(particlePrefab, transform.position + transform.up * -transform.localScale.y / 2, Quaternion.identity);
         // particles.transform.SetParent(gameObject.transform);
