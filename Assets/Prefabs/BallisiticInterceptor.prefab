@@ -150,9 +150,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8275eae3511821dcabfb64370051dd89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  target: {fileID: 0}
   velocity: {x: 0, y: 0, z: 0}
   mass: 0
+  hasRemoteDetonator: 0
+  hasSpawnedShards: 0
+  detonatorShardSpeed: 0
+  detonatorDistance: 0
   launchOffset: 0
+  endTime: 0
+  shardsPrefab: {fileID: 3174624270016498776, guid: 1945ee1e26ccf7650b35c90d751a9c71,
+    type: 3}
 --- !u!1001 &6819308452945044310
 PrefabInstance:
   m_ObjectHideFlags: 0

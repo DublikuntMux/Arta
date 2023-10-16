@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 
 public interface ISimulationObjectConfiguration
@@ -54,6 +55,9 @@ public class BallisticCannonConfigurer : ISimulationObjectConfiguration
     public float projectileSpeed {get; private set;}
     public Vector2 initialAngle {get; private set;}
     public Vector2 rotationSpeed {get; private set;}
+    public bool addsRemoteDetonator {get; private set;}
+    public float detonatorShardSpeed {get; private set;}
+    public float detonatorDistance {get; private set;}
 
     static private BallisticCannon prefab = Resources.Load<BallisticCannon>("Prefabs/BallisticCannon");
 
@@ -68,6 +72,9 @@ public class BallisticCannonConfigurer : ISimulationObjectConfiguration
             float.Parse(transform.Find("Cannon.rotationSpeed.x").GetComponent<TMP_InputField>().text),
             float.Parse(transform.Find("Cannon.rotationSpeed.y").GetComponent<TMP_InputField>().text)
         );
+        addsRemoteDetonator = transform.Find("Cannon.addsRemoteDetonator").GetComponent<Toggle>().isOn;
+        detonatorShardSpeed = float.Parse(transform.Find("Cannon.detonatorShardSpeed").GetComponent<TMP_InputField>().text);
+        detonatorDistance = float.Parse(transform.Find("Cannon.detonatorDistance").GetComponent<TMP_InputField>().text);
     }
 
     public void createObject(SceneController controller)
@@ -76,6 +83,9 @@ public class BallisticCannonConfigurer : ISimulationObjectConfiguration
         cannon.projectileSpeed = projectileSpeed;
         cannon.initialAngle = initialAngle;
         cannon.rotationSpeed = rotationSpeed;
+        cannon.addsRemoteDetonator = addsRemoteDetonator;
+        cannon.detonatorShardSpeed = detonatorShardSpeed;
+        cannon.detonatorDistance = detonatorDistance;
         controller.cannons.Add(cannon);
     }
 }
