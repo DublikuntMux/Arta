@@ -4,27 +4,41 @@ using System.Text;
 using UnityEngine;
 using TMPro;
 
+
 public class SceneController : MonoBehaviour
 {
     static public List<ISimulationObjectConfiguration> simulationObjects = new List<ISimulationObjectConfiguration>();
     static public float gravityAcceleration;
 
+    public GameObject obstaclesWrapper;
     public TMP_Text pausedText;
     public TMP_Text statsText;
 
     public List<BallisticTarget> targets = new List<BallisticTarget>();
-    public List<BallisticCannon> cannons = new List<BallisticCannon>();
+    public List<Cannon> cannons = new List<Cannon>();
     public bool isShowingSimulation {get; private set;}
     public float simulationTime {get; private set;}
     public float endTime {get; private set;}
+    public bool isReadyToRun;
 
     private float timeScale = 1f;
-    private bool isReadyToRun;
 
     public void startSimulation(List<BallisticInterceptionResult> interceptions)
     {
         endTime = interceptions[interceptions.Count - 1].time;
         isReadyToRun = true;
+    }
+
+    public void endSimulation()
+    {
+        isReadyToRun = false;
+        isShowingSimulation = false;
+    }
+
+    public float getScaledTimeDelta()
+    {
+        if (!isShowingSimulation) return 0f;
+        return Time.deltaTime * timeScale;
     }
 
     public void setTimeScale(float timeScale)
@@ -49,9 +63,13 @@ public class SceneController : MonoBehaviour
     void Start()
     {
         simulationTime = 0;
-        foreach (ISimulationObjectConfiguration obj in simulationObjects)
+        foreach (ISimulationObjectConfiguration obj in simulationObjects) {
             obj.createObject(this);
+            if (obj is ZenithCannonConfigurer)
+                obstaclesWrapper.SetActive(true);
+        }
         targets = BallisticTarget.getByTargetPriority(targets);
+        PathfindingWorldManager.Instance.InitializeGrid();
         updateStats();
     }
 
@@ -67,6 +85,6 @@ public class SceneController : MonoBehaviour
             pausedText.text = "Paused";
             return;
         }
-        simulationTime += Time.deltaTime * timeScale;
+        simulationTime += getScaledTimeDelta();
     }
 }

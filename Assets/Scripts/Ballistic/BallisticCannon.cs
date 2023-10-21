@@ -31,7 +31,7 @@ public class BallisticInterceptionResult {
 }
 
 
-public class BallisticCannon : MonoBehaviour
+public class BallisticCannon : Cannon
 {
     public float projectileSpeed;
     public float projectileMass;
@@ -47,7 +47,6 @@ public class BallisticCannon : MonoBehaviour
     public float stepFactor;
     public int iterationsPerFrame;
     public float crushCheckTimeDelta;
-    public int interceptorCount {get; private set;}
 
     private SceneController controller;
     private BallisticInterceptionResult calculationResult;

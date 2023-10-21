@@ -90,6 +90,46 @@ public class BallisticCannonConfigurer : ISimulationObjectConfiguration
     }
 }
 
+public class ZenithCannonConfigurer : ISimulationObjectConfiguration
+{
+    public float projectileSpeed {get; private set;}
+    public float projectileRotationSpeed {get; private set;}
+    public float projectileAcceleration {get; private set;}
+    public Vector2 initialAngle {get; private set;}
+    public bool addsRemoteDetonator {get; private set;}
+    public float detonatorShardSpeed {get; private set;}
+    public float detonatorDistance {get; private set;}
+
+    static private ZenithCannon prefab = Resources.Load<ZenithCannon>("Prefabs/ZenithCannon");
+
+    public ZenithCannonConfigurer(Transform transform)
+    {
+        projectileSpeed = float.Parse(transform.Find("Cannon.projectileSpeed").GetComponent<TMP_InputField>().text);
+        initialAngle = new Vector2(
+            float.Parse(transform.Find("Cannon.initialAngle.x").GetComponent<TMP_InputField>().text),
+            float.Parse(transform.Find("Cannon.initialAngle.y").GetComponent<TMP_InputField>().text)
+        );
+        projectileRotationSpeed = float.Parse(transform.Find("Cannon.projectileRotationSpeed").GetComponent<TMP_InputField>().text);
+        projectileAcceleration = float.Parse(transform.Find("Cannon.projectileAcceleration").GetComponent<TMP_InputField>().text);
+        addsRemoteDetonator = transform.Find("Cannon.addsRemoteDetonator").GetComponent<Toggle>().isOn;
+        detonatorShardSpeed = float.Parse(transform.Find("Cannon.detonatorShardSpeed").GetComponent<TMP_InputField>().text);
+        detonatorDistance = float.Parse(transform.Find("Cannon.detonatorDistance").GetComponent<TMP_InputField>().text);
+    }
+
+    public void createObject(SceneController controller)
+    {
+        ZenithCannon cannon = GameObject.Instantiate(prefab, Vector3.zero, Quaternion.identity);
+        cannon.projectileSpeed = projectileSpeed;
+        cannon.initialAngle = initialAngle;
+        cannon.projectileRotationSpeed = projectileRotationSpeed * 360;
+        cannon.projectileAcceleration = projectileAcceleration;
+        cannon.addsRemoteDetonator = addsRemoteDetonator;
+        cannon.detonatorShardSpeed = detonatorShardSpeed;
+        cannon.detonatorDistance = detonatorDistance;
+        controller.cannons.Add(cannon);
+    }
+}
+
 public class ObjectConfigurer : MonoBehaviour
 {
     public enum ObjectType {
@@ -105,6 +145,7 @@ public class ObjectConfigurer : MonoBehaviour
         switch (type) {
             case ObjectType.BallisticTarget: return new BallisticTargetConfigurer(transform);
             case ObjectType.BallisticCannon: return new BallisticCannonConfigurer(transform);
+            case ObjectType.MissileCannon: return new ZenithCannonConfigurer(transform);
             default: throw new System.NotImplementedException("ObjectConfigurer.ObjectType not implemented");
         }
     }

@@ -18,9 +18,10 @@ public class SimulationConfigurer : MonoBehaviour
     {
         configurerPrefabs.Add(ObjectConfigurer.ObjectType.BallisticTarget, Resources.Load<GameObject>("Prefabs/BallisticTargetConfigurer"));
         configurerPrefabs.Add(ObjectConfigurer.ObjectType.BallisticCannon, Resources.Load<GameObject>("Prefabs/BallisticCannonConfigurer"));
+        configurerPrefabs.Add(ObjectConfigurer.ObjectType.MissileCannon, Resources.Load<GameObject>("Prefabs/ZenithCannonConfigurer"));
         newButtons.Add(ObjectConfigurer.ObjectType.BallisticTarget, GameObject.Find("BallisticTargetColumn").transform.Find("Instances").Find("NewButton").gameObject);
         newButtons.Add(ObjectConfigurer.ObjectType.BallisticCannon, GameObject.Find("BallisticCannonColumn").transform.Find("Instances").Find("NewButton").gameObject);
-        addBallisiticCannon();
+        newButtons.Add(ObjectConfigurer.ObjectType.MissileCannon, GameObject.Find("MissileCannonColumn").transform.Find("Instances").Find("NewButton").gameObject);
         addBallisiticTarget();
     }
 
@@ -67,4 +68,5 @@ public class SimulationConfigurer : MonoBehaviour
 
     public void addBallisiticTarget () => addConfigurer(ObjectConfigurer.ObjectType.BallisticTarget);
     public void addBallisiticCannon () => addConfigurer(ObjectConfigurer.ObjectType.BallisticCannon);
+    public void addZenithCannon () => addConfigurer(ObjectConfigurer.ObjectType.MissileCannon);
 }
