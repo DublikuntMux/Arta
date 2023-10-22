@@ -38,7 +38,7 @@ public class AStarAgent : MonoBehaviour
     private void Awake()
     {
         AssignPriority();
-        controller = GameObject.FindFirstObjectByType<SceneController>();
+        controller = FindFirstObjectByType<SceneController>();
     }
 
     private void Start()

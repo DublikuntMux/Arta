@@ -53,6 +53,12 @@ public class BallisticTarget : MonoBehaviour
         endTime = controller.simulationTime;
     }
 
+    public void endSimulation(float endTime)
+    {
+        hasEnded = true;
+        this.endTime = endTime;
+    }
+
     public bool isInsideTheTarget(Vector3 point, Vector3 targetPosition)
     {
         // Regular is point inside a cuboid collision code
@@ -64,7 +70,7 @@ public class BallisticTarget : MonoBehaviour
 
     void Start()
     {
-        controller = GameObject.FindFirstObjectByType<SceneController>();
+        controller = FindFirstObjectByType<SceneController>();
         lineRenderer = gameObject.GetComponent<LineRenderer>();
         lineRenderer.positionCount = 0;
     }

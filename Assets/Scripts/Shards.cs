@@ -14,7 +14,7 @@ public class Shards : MonoBehaviour
 
     void Start()
     {
-        controller = GameObject.FindFirstObjectByType<SceneController>();
+        controller = FindFirstObjectByType<SceneController>();
         launchOffset = controller.simulationTime;
     }
 

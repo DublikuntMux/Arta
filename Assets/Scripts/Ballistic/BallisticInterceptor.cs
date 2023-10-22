@@ -23,7 +23,7 @@ public class BallisticInterceptor : MonoBehaviour
 
     void Start()
     {
-        controller = GameObject.FindFirstObjectByType<SceneController>();
+        controller = FindFirstObjectByType<SceneController>();
         lineRenderer = gameObject.GetComponent<LineRenderer>();
         lineRenderer.positionCount = 0;
     }
@@ -31,7 +31,7 @@ public class BallisticInterceptor : MonoBehaviour
     void Update()
     {
         if (hasSpawnedShards) return;
-        if (controller.simulationTime >= endTime && !target.hasEnded && !hasRemoteDetonator) target.endSimulation();
+        if (controller.simulationTime >= endTime && !target.hasEnded && !hasRemoteDetonator) target.endSimulation(endTime);
         float time = controller.simulationTime < endTime ? controller.simulationTime : endTime;
         lineRenderer.SetPosition(lineRenderer.positionCount++, transform.position);
         Vector3 acceleration = SceneController.gravityAcceleration * Vector3.down;

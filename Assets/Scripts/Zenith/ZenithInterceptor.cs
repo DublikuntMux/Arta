@@ -31,7 +31,7 @@ public class ZenithInterceptor : MonoBehaviour
 
     void Start()
     {
-        controller = GameObject.FindFirstObjectByType<SceneController>();
+        controller = FindFirstObjectByType<SceneController>();
         lineRenderer = gameObject.GetComponent<LineRenderer>();
         lineRenderer.positionCount = 0;
         aStar = GetComponent<AStarAgent>();
@@ -54,7 +54,7 @@ public class ZenithInterceptor : MonoBehaviour
             shards.target = target;
         }
         lineRenderer.SetPosition(lineRenderer.positionCount++, transform.position);
-        if (!Physics.Linecast(transform.position, target.transform.position)) {
+        if (!Physics.Linecast(transform.position, target.transform.position) && Physics.OverlapSphere(transform.position, 0).Length == 0) {
             if (algorithmType == AlgorithmType.AStar) {
                 aStar.stopExecution();
                 algorithmType = AlgorithmType.Direct;
@@ -87,7 +87,7 @@ public class ZenithInterceptor : MonoBehaviour
         }
         if (target.isInsideTheTarget(transform.position, target.transform.position)) {
             hasReachedTheTarget = true;
-            GameObject.FindFirstObjectByType<ZenithCannon>().interceptorsArrived++;
+            FindFirstObjectByType<ZenithCannon>().interceptorsArrived++;
             target.endSimulation();
         }
         // if (aStar.Status == AStarAgentStatus.Finished) {

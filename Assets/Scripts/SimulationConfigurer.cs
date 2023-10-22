@@ -7,6 +7,8 @@ using TMPro;
 
 public class SimulationConfigurer : MonoBehaviour
 {
+    static private int presetId = 0; 
+
     public GameObject buttonPrefab;
     private Dictionary<ObjectConfigurer.ObjectType, GameObject> configurerPrefabs = new Dictionary<ObjectConfigurer.ObjectType, GameObject>();
     private Dictionary<ObjectConfigurer.ObjectType, GameObject> newButtons = new Dictionary<ObjectConfigurer.ObjectType, GameObject>();
@@ -22,7 +24,113 @@ public class SimulationConfigurer : MonoBehaviour
         newButtons.Add(ObjectConfigurer.ObjectType.BallisticTarget, GameObject.Find("BallisticTargetColumn").transform.Find("Instances").Find("NewButton").gameObject);
         newButtons.Add(ObjectConfigurer.ObjectType.BallisticCannon, GameObject.Find("BallisticCannonColumn").transform.Find("Instances").Find("NewButton").gameObject);
         newButtons.Add(ObjectConfigurer.ObjectType.MissileCannon, GameObject.Find("MissileCannonColumn").transform.Find("Instances").Find("NewButton").gameObject);
-        addBallisiticTarget();
+        loadExample(presetId);
+    }
+
+    private void loadExample(int preset)
+    {
+        switch (preset) {
+            case 0: addBallisiticTarget(); break;
+            case 1: {
+                addBallisiticTarget();
+                GameObject.Find("Target.startPosition.x").GetComponent<TMP_InputField>().text = "100";
+                GameObject.Find("Target.startPosition.y").GetComponent<TMP_InputField>().text = "50";
+                GameObject.Find("Target.startPosition.z").GetComponent<TMP_InputField>().text = "30";
+                GameObject.Find("Target.initialVelocity.x").GetComponent<TMP_InputField>().text = "-40";
+                GameObject.Find("Target.initialVelocity.y").GetComponent<TMP_InputField>().text = "9";
+                GameObject.Find("Target.initialVelocity.z").GetComponent<TMP_InputField>().text = "1";
+                GameObject.Find("Target.size.x").GetComponent<TMP_InputField>().text = "5";
+                GameObject.Find("Target.size.y").GetComponent<TMP_InputField>().text = "2";
+                GameObject.Find("Target.size.z").GetComponent<TMP_InputField>().text = "2";
+                GameObject.Find("Target.acceleration").GetComponent<TMP_InputField>().text = "3";
+                addBallisticCannon();
+                GameObject.Find("Cannon.projectileSpeed").GetComponent<TMP_InputField>().text = "90";
+                GameObject.Find("Cannon.rotationSpeed.x").GetComponent<TMP_InputField>().text = "2";
+                GameObject.Find("Cannon.rotationSpeed.y").GetComponent<TMP_InputField>().text = "1";
+                GameObject.Find("Cannon.initialAngle.x").GetComponent<TMP_InputField>().text = "0";
+                GameObject.Find("Cannon.initialAngle.y").GetComponent<TMP_InputField>().text = "20";
+                GameObject.Find("SceneController.gravityAcceleration").GetComponent<TMP_InputField>().text = "5";
+                break;
+            }
+            case 2: {
+                addBallisiticTarget();
+                GameObject.Find("Target.startPosition.x").GetComponent<TMP_InputField>().text = "-90";
+                GameObject.Find("Target.startPosition.y").GetComponent<TMP_InputField>().text = "15";
+                GameObject.Find("Target.startPosition.z").GetComponent<TMP_InputField>().text = "-2";
+                GameObject.Find("Target.initialVelocity.x").GetComponent<TMP_InputField>().text = "0";
+                GameObject.Find("Target.initialVelocity.y").GetComponent<TMP_InputField>().text = "1";
+                GameObject.Find("Target.initialVelocity.z").GetComponent<TMP_InputField>().text = "0.1";
+                GameObject.Find("Target.size.x").GetComponent<TMP_InputField>().text = "2.5";
+                GameObject.Find("Target.size.y").GetComponent<TMP_InputField>().text = "0.5";
+                GameObject.Find("Target.size.z").GetComponent<TMP_InputField>().text = "0.5";
+                GameObject.Find("Target.acceleration").GetComponent<TMP_InputField>().text = "3";
+                addZenithCannon();
+                GameObject.Find("Cannon.projectileSpeed").GetComponent<TMP_InputField>().text = "20";
+                GameObject.Find("Cannon.initialAngle.x").GetComponent<TMP_InputField>().text = "0";
+                GameObject.Find("Cannon.initialAngle.y").GetComponent<TMP_InputField>().text = "0";
+                GameObject.Find("Cannon.projectileRotationSpeed").GetComponent<TMP_InputField>().text = "2";
+                GameObject.Find("Cannon.projectileAcceleration").GetComponent<TMP_InputField>().text = "5";
+                GameObject.Find("SceneController.gravityAcceleration").GetComponent<TMP_InputField>().text = "3";
+                break;
+            }
+            case 3: {
+                addBallisiticTarget();
+                GameObject.Find("Target.startPosition.x").GetComponent<TMP_InputField>().text = "-35";
+                GameObject.Find("Target.startPosition.y").GetComponent<TMP_InputField>().text = "25";
+                GameObject.Find("Target.startPosition.z").GetComponent<TMP_InputField>().text = "100";
+                GameObject.Find("Target.initialVelocity.x").GetComponent<TMP_InputField>().text = "5";
+                GameObject.Find("Target.initialVelocity.y").GetComponent<TMP_InputField>().text = "2";
+                GameObject.Find("Target.initialVelocity.z").GetComponent<TMP_InputField>().text = "0.2";
+                GameObject.Find("Target.size.x").GetComponent<TMP_InputField>().text = "3";
+                GameObject.Find("Target.size.y").GetComponent<TMP_InputField>().text = "0.5";
+                GameObject.Find("Target.size.z").GetComponent<TMP_InputField>().text = "0.5";
+                GameObject.Find("Target.acceleration").GetComponent<TMP_InputField>().text = "2";
+                addZenithCannon();
+                GameObject.Find("Cannon.projectileSpeed").GetComponent<TMP_InputField>().text = "25";
+                GameObject.Find("Cannon.initialAngle.x").GetComponent<TMP_InputField>().text = "0";
+                GameObject.Find("Cannon.initialAngle.y").GetComponent<TMP_InputField>().text = "30";
+                GameObject.Find("Cannon.projectileRotationSpeed").GetComponent<TMP_InputField>().text = "2.5";
+                GameObject.Find("Cannon.projectileAcceleration").GetComponent<TMP_InputField>().text = "3";
+                GameObject.Find("Cannon.addsRemoteDetonator").GetComponent<Toggle>().isOn = true;
+                GameObject.Find("SceneController.gravityAcceleration").GetComponent<TMP_InputField>().text = "3";
+                break;
+            }
+            case 4: {
+                addBallisiticTarget();
+                addBallisiticTarget();
+                ObjectConfigurer[] targets = FindObjectsOfType<ObjectConfigurer>(true);
+                Transform currTarget = targets[0].transform;
+                currTarget.Find("Target.startPosition.x").gameObject.GetComponent<TMP_InputField>().text = "100";
+                currTarget.Find("Target.startPosition.y").gameObject.GetComponent<TMP_InputField>().text = "50";
+                currTarget.Find("Target.startPosition.z").gameObject.GetComponent<TMP_InputField>().text = "30";
+                currTarget.Find("Target.initialVelocity.x").gameObject.GetComponent<TMP_InputField>().text = "-40";
+                currTarget.Find("Target.initialVelocity.y").gameObject.GetComponent<TMP_InputField>().text = "9";
+                currTarget.Find("Target.initialVelocity.z").gameObject.GetComponent<TMP_InputField>().text = "1";
+                currTarget.Find("Target.size.x").gameObject.GetComponent<TMP_InputField>().text = "5";
+                currTarget.Find("Target.size.y").gameObject.GetComponent<TMP_InputField>().text = "2";
+                currTarget.Find("Target.size.z").gameObject.GetComponent<TMP_InputField>().text = "2";
+                currTarget.Find("Target.acceleration").gameObject.GetComponent<TMP_InputField>().text = "3";
+                currTarget = targets[1].transform;
+                currTarget.Find("Target.startPosition.x").gameObject.GetComponent<TMP_InputField>().text = "-45";
+                currTarget.Find("Target.startPosition.y").gameObject.GetComponent<TMP_InputField>().text = "30";
+                currTarget.Find("Target.startPosition.z").gameObject.GetComponent<TMP_InputField>().text = "-100";
+                currTarget.Find("Target.initialVelocity.x").gameObject.GetComponent<TMP_InputField>().text = "10";
+                currTarget.Find("Target.initialVelocity.y").gameObject.GetComponent<TMP_InputField>().text = "15";
+                currTarget.Find("Target.initialVelocity.z").gameObject.GetComponent<TMP_InputField>().text = "3";
+                currTarget.Find("Target.size.x").gameObject.GetComponent<TMP_InputField>().text = "4";
+                currTarget.Find("Target.size.y").gameObject.GetComponent<TMP_InputField>().text = "2";
+                currTarget.Find("Target.size.z").gameObject.GetComponent<TMP_InputField>().text = "2";
+                currTarget.Find("Target.acceleration").gameObject.GetComponent<TMP_InputField>().text = "5";
+                addBallisticCannon();
+                GameObject.Find("Cannon.projectileSpeed").GetComponent<TMP_InputField>().text = "60";
+                GameObject.Find("Cannon.rotationSpeed.x").GetComponent<TMP_InputField>().text = "2.5";
+                GameObject.Find("Cannon.rotationSpeed.y").GetComponent<TMP_InputField>().text = "2";
+                GameObject.Find("Cannon.initialAngle.x").GetComponent<TMP_InputField>().text = "0";
+                GameObject.Find("Cannon.initialAngle.y").GetComponent<TMP_InputField>().text = "20";
+                GameObject.Find("SceneController.gravityAcceleration").GetComponent<TMP_InputField>().text = "9.8";
+                break;
+            }
+        }
     }
 
     private void loadGlobalSettings()
@@ -53,7 +161,7 @@ public class SimulationConfigurer : MonoBehaviour
 
     public void addConfigurer(ObjectConfigurer.ObjectType type)
     {
-        ObjectConfigurer configurer = Instantiate(configurerPrefabs[type], GameObject.FindFirstObjectByType<Canvas>().transform).GetComponent<ObjectConfigurer>();
+        ObjectConfigurer configurer = Instantiate(configurerPrefabs[type], FindFirstObjectByType<Canvas>().transform).GetComponent<ObjectConfigurer>();
         configurers.Add(configurer);
         GameObject button = Instantiate(buttonPrefab, newButtons[type].transform.parent);
         button.transform.GetChild(0).gameObject.GetComponent<TMP_Text>().text = (newButtons[type].transform.parent.childCount - 1).ToString();
@@ -62,11 +170,25 @@ public class SimulationConfigurer : MonoBehaviour
         newButtons[type].transform.SetAsLastSibling();
         if (newButtons[type].transform.parent.childCount > 5)
             GameObject.Destroy(newButtons[type]);
+        if (type != ObjectConfigurer.ObjectType.BallisticTarget) {
+            GameObject.Destroy(newButtons[ObjectConfigurer.ObjectType.BallisticCannon]);
+            GameObject.Destroy(newButtons[ObjectConfigurer.ObjectType.MissileCannon]);
+        }
         GameObject.Find("GlobalSettings").transform.SetAsLastSibling();
         activateConfigurer(configurer, button);
     }
 
+    public void selectExample(int exampleNumber)
+    {
+        presetId = exampleNumber;
+        SceneManager.LoadScene(0);
+    }
+
     public void addBallisiticTarget () => addConfigurer(ObjectConfigurer.ObjectType.BallisticTarget);
-    public void addBallisiticCannon () => addConfigurer(ObjectConfigurer.ObjectType.BallisticCannon);
+    public void addBallisticCannon () => addConfigurer(ObjectConfigurer.ObjectType.BallisticCannon);
     public void addZenithCannon () => addConfigurer(ObjectConfigurer.ObjectType.MissileCannon);
+    public void selectExample1() => selectExample(1);
+    public void selectExample2() => selectExample(2);
+    public void selectExample3() => selectExample(3);
+    public void selectExample4() => selectExample(4);
 }

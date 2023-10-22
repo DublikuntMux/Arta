@@ -20,7 +20,7 @@ public class ZenithCannon : Cannon
     
     void Start()
     {
-        controller = GameObject.FindFirstObjectByType<SceneController>();
+        controller = FindFirstObjectByType<SceneController>();
         transform.localRotation = convertRotation(new Vector2(initialAngle.x, 0));
         transform.Find("himarsLauncherWrapper").localRotation = convertRotation(new Vector2(0, initialAngle.y));
         controller.isReadyToRun = true;
