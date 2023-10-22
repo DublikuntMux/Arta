@@ -31,7 +31,7 @@ public class ZenithCannon : Cannon
         return Quaternion.Euler(0, -rotation.x, rotation.y);
     }
 
-    public void launchInterceptor(BallisticTarget target)
+    public void launchInterceptor(Target target)
     {
         ZenithInterceptor interceptor = Instantiate(interceptorPrefab, transform.position, convertRotation(initialAngle));
         interceptor.target = target;

@@ -41,7 +41,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9153381591938484392}
-  - component: {fileID: 3388169385622523132}
+  - component: {fileID: 1225996396317819031}
   m_Layer: 0
   m_Name: ZenithCannon
   m_TagString: Untagged
@@ -66,7 +66,7 @@ Transform:
   - {fileID: 2647625309336099759}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 8.787, z: 0}
---- !u!114 &3388169385622523132
+--- !u!114 &1225996396317819031
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -80,10 +80,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   projectileSpeed: 0
   projectileRotationSpeed: 0
+  projectileAcceleration: 0
   initialAngle: {x: 0, y: 0}
   addsRemoteDetonator: 0
   detonatorShardSpeed: 0
   detonatorDistance: 0
+  interceptorsArrived: 0
   interceptorPrefab: {fileID: 6923740257956046541, guid: f50cd7dc566ce3e91b6e82961230e47f,
     type: 3}
 --- !u!1001 &1551782697718800214

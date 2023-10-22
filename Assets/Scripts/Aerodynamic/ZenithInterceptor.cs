@@ -11,7 +11,7 @@ public class ZenithInterceptor : MonoBehaviour
     public float startSpeed;
     public float rotationSpeed;
     public float acceleration;
-    public BallisticTarget target;
+    public Target target;
 
     public bool hasRemoteDetonator;
     public float detonatorShardSpeed;

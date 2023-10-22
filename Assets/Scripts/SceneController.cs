@@ -14,7 +14,7 @@ public class SceneController : MonoBehaviour
     public TMP_Text pausedText;
     public TMP_Text statsText;
 
-    public List<BallisticTarget> targets = new List<BallisticTarget>();
+    public List<Target> targets = new List<Target>();
     public List<Cannon> cannons = new List<Cannon>();
     public bool isShowingSimulation {get; private set;}
     public float simulationTime {get; private set;}
@@ -68,7 +68,7 @@ public class SceneController : MonoBehaviour
             if (obj is ZenithCannonConfigurer)
                 obstaclesWrapper.SetActive(true);
         }
-        targets = BallisticTarget.getByTargetPriority(targets);
+        targets = Target.getByTargetPriority(targets);
         PathfindingWorldManager.Instance.InitializeGrid();
         updateStats();
     }

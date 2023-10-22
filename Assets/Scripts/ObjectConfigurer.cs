@@ -90,6 +90,54 @@ public class BallisticCannonConfigurer : ISimulationObjectConfiguration
     }
 }
 
+public class AerodynamicTargetConfigurer : ISimulationObjectConfiguration
+{
+    public Vector3 startPosition {get; private set;}
+    public Vector3 endPosition {get; private set;}
+    public Vector3 initialVelocity {get; private set;}
+    public Vector3 size {get; private set;}
+    public float rotationSpeed {get; private set;}
+
+    static private AerodynamicTarget prefab = Resources.Load<AerodynamicTarget>("Prefabs/AerodynamicTarget");
+
+    public AerodynamicTargetConfigurer(Transform transform) 
+    {
+        startPosition = new Vector3(
+            float.Parse(transform.Find("Target.startPosition.x").GetComponent<TMP_InputField>().text),
+            float.Parse(transform.Find("Target.startPosition.y").GetComponent<TMP_InputField>().text),
+            float.Parse(transform.Find("Target.startPosition.z").GetComponent<TMP_InputField>().text)
+        );
+        endPosition = new Vector3(
+            float.Parse(transform.Find("Target.endPosition.x").GetComponent<TMP_InputField>().text),
+            float.Parse(transform.Find("Target.endPosition.y").GetComponent<TMP_InputField>().text),
+            float.Parse(transform.Find("Target.endPosition.z").GetComponent<TMP_InputField>().text)
+        );
+        initialVelocity = new Vector3(
+            float.Parse(transform.Find("Target.initialVelocity.x").GetComponent<TMP_InputField>().text),
+            float.Parse(transform.Find("Target.initialVelocity.y").GetComponent<TMP_InputField>().text),
+            float.Parse(transform.Find("Target.initialVelocity.z").GetComponent<TMP_InputField>().text)
+        );
+        size = new Vector3(
+            float.Parse(transform.Find("Target.size.x").GetComponent<TMP_InputField>().text),
+            float.Parse(transform.Find("Target.size.y").GetComponent<TMP_InputField>().text),
+            float.Parse(transform.Find("Target.size.z").GetComponent<TMP_InputField>().text)
+        );
+        rotationSpeed = float.Parse(transform.Find("Target.rotationSpeed").GetComponent<TMP_InputField>().text);
+    }
+
+    public void createObject(SceneController controller)
+    {
+        AerodynamicTarget target = GameObject.Instantiate(prefab, startPosition, Quaternion.identity);
+        target.transform.localScale = size;
+        target.startPosition = startPosition;
+        target.endPosition = endPosition;
+        target.initialVelocity = initialVelocity;
+        target.size = size;
+        target.rotationSpeed = rotationSpeed * 360;
+        controller.targets.Add(target);
+    }
+}
+
 public class ZenithCannonConfigurer : ISimulationObjectConfiguration
 {
     public float projectileSpeed {get; private set;}
@@ -145,6 +193,7 @@ public class ObjectConfigurer : MonoBehaviour
         switch (type) {
             case ObjectType.BallisticTarget: return new BallisticTargetConfigurer(transform);
             case ObjectType.BallisticCannon: return new BallisticCannonConfigurer(transform);
+            case ObjectType.AerodynamicTarget: return new AerodynamicTargetConfigurer(transform);
             case ObjectType.MissileCannon: return new ZenithCannonConfigurer(transform);
             default: throw new System.NotImplementedException("ObjectConfigurer.ObjectType not implemented");
         }

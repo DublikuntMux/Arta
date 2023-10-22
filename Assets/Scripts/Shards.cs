@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Shards : MonoBehaviour
 {
-    public BallisticTarget target;
+    public Target target;
     public float speed;
     public float launchOffset;
 

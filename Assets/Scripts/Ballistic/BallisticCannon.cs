@@ -233,7 +233,7 @@ public class BallisticCannon : Cannon
     void Update()
     {
         if (interceptions.Count < controller.targets.Count) {
-            handleCalculations(controller.targets[interceptions.Count]);
+            handleCalculations((BallisticTarget)controller.targets[interceptions.Count]);
             if (interceptions.Count == controller.targets.Count)
                 controller.startSimulation(interceptions);
         }
