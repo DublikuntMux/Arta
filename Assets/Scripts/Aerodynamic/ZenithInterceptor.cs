@@ -44,7 +44,7 @@ public class ZenithInterceptor : MonoBehaviour
     
     void performRandomAction()
     {
-        if (Random.value < 10 * controller.getScaledTimeDelta()) {
+        if (Random.value < 5 * controller.getScaledTimeDelta()) {
             transform.position += new Vector3(Random.Range(-0.2f, 0.2f), Random.Range(-0.2f, 0.2f), Random.Range(-0.2f, 0.2f));
         }
     }

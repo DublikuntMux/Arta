@@ -90,7 +90,7 @@ public class AStarAgent : MonoBehaviour
         Vector3 direction = (currentPoint.Coords - cameFromPoint.Coords);
         direction = direction.normalized;
 
-        CornerPoints.Add(currentPoint);
+        // CornerPoints.Add(currentPoint);
 
         int count = 0;
         while (current.CameFrom.x != -1 && count < 10000)
