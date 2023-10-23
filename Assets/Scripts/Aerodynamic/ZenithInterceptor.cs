@@ -42,9 +42,17 @@ public class ZenithInterceptor : MonoBehaviour
         speed = startSpeed;
     }
     
+    void performRandomAction()
+    {
+        if (Random.value < 10 * controller.getScaledTimeDelta()) {
+            transform.position += new Vector3(Random.Range(-0.2f, 0.2f), Random.Range(-0.2f, 0.2f), Random.Range(-0.2f, 0.2f));
+        }
+    }
+
     void Update()
     {
         if (hasReachedTheTarget || !controller.isShowingSimulation) return;
+        performRandomAction();
         speed = startSpeed + (controller.simulationTime - startTime) * acceleration;
         aStar.Speed = speed;
         if (hasRemoteDetonator && Vector3.Distance(transform.position, target.transform.position) <= detonatorDistance) {

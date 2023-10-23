@@ -39,10 +39,21 @@ public class AerodynamicTarget : Target
         aStar.Pathfinding(path[1]);
     }
 
+    void performRandomAction()
+    {
+        if (Random.value < 10 * controller.getScaledTimeDelta()) {
+            transform.eulerAngles += new Vector3(Random.Range(-5f, 5f), Random.Range(-5f, 5f), Random.Range(-5f, 5f));
+        }
+        if (Random.value < 10 * controller.getScaledTimeDelta()) {
+            transform.position += new Vector3(Random.Range(-0.2f, 0.2f), Random.Range(-0.2f, 0.2f), Random.Range(-0.2f, 0.2f));
+        }
+    }
+
     void Update()
     {
-        if (hasEnded) return;
+        if (hasEnded || !controller.isShowingSimulation) return;
         lineRenderer.SetPosition(lineRenderer.positionCount++, transform.position);
+        performRandomAction();
         if (aStar.Status == AStarAgentStatus.Finished && pathSegmentIndex != path.Count - 2)
             aStar.Pathfinding(path[++pathSegmentIndex + 1]);
     }
