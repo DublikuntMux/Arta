@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class AerodynamicTarget : Target
 {
-    public Vector3 startPosition;
-    public Vector3 endPosition;
+    public List<Vector3> path;
     public Vector3 initialVelocity;
     public float rotationSpeed;
     public float mass;
 
+    private int pathSegmentIndex;
     private AStarAgent aStar;
 
     public override float? timeToHitTheGroud()
@@ -32,17 +32,18 @@ public class AerodynamicTarget : Target
     protected override void Start()
     {
         base.Start();
-        transform.position = startPosition;
         transform.forward = initialVelocity;
         aStar = GetComponent<AStarAgent>();
         aStar.Speed = initialVelocity.magnitude;
         aStar.TurnSpeed = rotationSpeed;
-        aStar.Pathfinding(endPosition);
+        aStar.Pathfinding(path[1]);
     }
 
     void Update()
     {
         if (hasEnded) return;
         lineRenderer.SetPosition(lineRenderer.positionCount++, transform.position);
+        if (aStar.Status == AStarAgentStatus.Finished && pathSegmentIndex != path.Count - 2)
+            aStar.Pathfinding(path[++pathSegmentIndex + 1]);
     }
 }

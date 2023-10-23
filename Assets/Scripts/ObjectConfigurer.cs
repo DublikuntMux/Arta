@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -90,10 +91,15 @@ public class BallisticCannonConfigurer : ISimulationObjectConfiguration
     }
 }
 
+[System.Serializable]
+public class InvalidPathException : System.Exception {
+    public InvalidPathException(string message)
+        : base(message) { }
+}
+
 public class AerodynamicTargetConfigurer : ISimulationObjectConfiguration
 {
-    public Vector3 startPosition {get; private set;}
-    public Vector3 endPosition {get; private set;}
+    public List<Vector3> path;
     public Vector3 initialVelocity {get; private set;}
     public Vector3 size {get; private set;}
     public float rotationSpeed {get; private set;}
@@ -102,16 +108,17 @@ public class AerodynamicTargetConfigurer : ISimulationObjectConfiguration
 
     public AerodynamicTargetConfigurer(Transform transform) 
     {
-        startPosition = new Vector3(
-            float.Parse(transform.Find("Target.startPosition.x").GetComponent<TMP_InputField>().text),
-            float.Parse(transform.Find("Target.startPosition.y").GetComponent<TMP_InputField>().text),
-            float.Parse(transform.Find("Target.startPosition.z").GetComponent<TMP_InputField>().text)
-        );
-        endPosition = new Vector3(
-            float.Parse(transform.Find("Target.endPosition.x").GetComponent<TMP_InputField>().text),
-            float.Parse(transform.Find("Target.endPosition.y").GetComponent<TMP_InputField>().text),
-            float.Parse(transform.Find("Target.endPosition.z").GetComponent<TMP_InputField>().text)
-        );
+        // startPosition = new Vector3(
+        //     float.Parse(transform.Find("Target.startPosition.x").GetComponent<TMP_InputField>().text),
+        //     float.Parse(transform.Find("Target.startPosition.y").GetComponent<TMP_InputField>().text),
+        //     float.Parse(transform.Find("Target.startPosition.z").GetComponent<TMP_InputField>().text)
+        // );
+        // endPosition = new Vector3(
+        //     float.Parse(transform.Find("Target.endPosition.x").GetComponent<TMP_InputField>().text),
+        //     float.Parse(transform.Find("Target.endPosition.y").GetComponent<TMP_InputField>().text),
+        //     float.Parse(transform.Find("Target.endPosition.z").GetComponent<TMP_InputField>().text)
+        // );
+        path = parsePath(transform.Find("Target.path").GetComponent<TMP_InputField>().text);
         initialVelocity = new Vector3(
             float.Parse(transform.Find("Target.initialVelocity.x").GetComponent<TMP_InputField>().text),
             float.Parse(transform.Find("Target.initialVelocity.y").GetComponent<TMP_InputField>().text),
@@ -125,12 +132,53 @@ public class AerodynamicTargetConfigurer : ISimulationObjectConfiguration
         rotationSpeed = float.Parse(transform.Find("Target.rotationSpeed").GetComponent<TMP_InputField>().text);
     }
 
+    private List<Vector3> parsePath(string str)
+    {
+        int cursor = 0;
+        List<Vector3> res = new List<Vector3>();   
+        while (cursor < str.Length) {
+            int separatorIndex = str.IndexOf(',', cursor);
+            if (separatorIndex == -1) throw new InvalidPathException("The point is missing Y and Z coordinates");
+            float x;
+            try {
+                x = float.Parse(str.Substring(cursor, separatorIndex - cursor));
+            } catch (System.FormatException) {
+                throw new InvalidPathException("Invalid float for X");
+            }
+            cursor = separatorIndex + 1;
+
+            separatorIndex = str.IndexOf(',', cursor);
+            if (separatorIndex == -1) throw new InvalidPathException("The point is missing Z coordinates");
+            float y;
+            try {
+                y = float.Parse(str.Substring(cursor, separatorIndex - cursor));
+            } catch (System.FormatException) {
+                throw new InvalidPathException("Invalid float for Y");
+            }
+            cursor = separatorIndex + 1;
+
+            separatorIndex = str.IndexOf(';', cursor);
+            if (separatorIndex == -1) throw new InvalidPathException("The point is missing the semicolon");
+            float z;
+            try {
+                z = float.Parse(str.Substring(cursor, separatorIndex - cursor));
+            } catch (System.FormatException) {
+                throw new InvalidPathException("Invalid float for Z");
+            }
+            cursor = separatorIndex + 1;
+
+            res.Add(new Vector3(x, y, z));
+        }
+        if (res.Count < 2)
+            throw new InvalidPathException("Path must have a starting and an ending point");
+        return res;
+    }
+
     public void createObject(SceneController controller)
     {
-        AerodynamicTarget target = GameObject.Instantiate(prefab, startPosition, Quaternion.identity);
+        AerodynamicTarget target = GameObject.Instantiate(prefab, path[0], Quaternion.identity);
         target.transform.localScale = size;
-        target.startPosition = startPosition;
-        target.endPosition = endPosition;
+        target.path = path;
         target.initialVelocity = initialVelocity;
         target.size = size;
         target.rotationSpeed = rotationSpeed * 360;

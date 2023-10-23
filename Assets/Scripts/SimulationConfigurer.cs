@@ -77,15 +77,16 @@ public class SimulationConfigurer : MonoBehaviour
             }
             case 3: {
                 addAerodynamicTarget();
-                GameObject.Find("Target.startPosition.x").GetComponent<TMP_InputField>().text = "-35";
-                GameObject.Find("Target.startPosition.y").GetComponent<TMP_InputField>().text = "25";
-                GameObject.Find("Target.startPosition.z").GetComponent<TMP_InputField>().text = "100";
-                GameObject.Find("Target.endPosition.x").GetComponent<TMP_InputField>().text = "10";
-                GameObject.Find("Target.endPosition.y").GetComponent<TMP_InputField>().text = "17";
-                GameObject.Find("Target.endPosition.z").GetComponent<TMP_InputField>().text = "70";
-                GameObject.Find("Target.initialVelocity.x").GetComponent<TMP_InputField>().text = "10";
-                GameObject.Find("Target.initialVelocity.y").GetComponent<TMP_InputField>().text = "-3";
-                GameObject.Find("Target.initialVelocity.z").GetComponent<TMP_InputField>().text = "0.5";
+                // GameObject.Find("Target.startPosition.x").GetComponent<TMP_InputField>().text = "-35";
+                // GameObject.Find("Target.startPosition.y").GetComponent<TMP_InputField>().text = "25";
+                // GameObject.Find("Target.startPosition.z").GetComponent<TMP_InputField>().text = "100";
+                // GameObject.Find("Target.endPosition.x").GetComponent<TMP_InputField>().text = "10";
+                // GameObject.Find("Target.endPosition.y").GetComponent<TMP_InputField>().text = "17";
+                // GameObject.Find("Target.endPosition.z").GetComponent<TMP_InputField>().text = "70";
+                GameObject.Find("Target.path").GetComponent<TMP_InputField>().text = "-35,25,100;-40,16,110;10,17,70;";
+                GameObject.Find("Target.initialVelocity.x").GetComponent<TMP_InputField>().text = "15";
+                GameObject.Find("Target.initialVelocity.y").GetComponent<TMP_InputField>().text = "-5";
+                GameObject.Find("Target.initialVelocity.z").GetComponent<TMP_InputField>().text = "5";
                 GameObject.Find("Target.size.z").GetComponent<TMP_InputField>().text = "3";
                 GameObject.Find("Target.size.y").GetComponent<TMP_InputField>().text = "0.5";
                 GameObject.Find("Target.size.x").GetComponent<TMP_InputField>().text = "0.5";
@@ -146,8 +147,11 @@ public class SimulationConfigurer : MonoBehaviour
 
     public void submit()
     {
-        foreach (ObjectConfigurer configurer in configurers) {
-            SceneController.simulationObjects.Add(configurer.getConfiguration());
+        try {
+            foreach (ObjectConfigurer configurer in configurers)
+                SceneController.simulationObjects.Add(configurer.getConfiguration());
+        } catch (InvalidPathException e) {
+            Debug.Log(e.Message);
         }
         loadGlobalSettings();
         SceneManager.LoadScene("Scenes/Game");
