@@ -1,3 +1,6 @@
+// This file is a modified version of abitofgamedev's code
+// The original is availiable at https://github.com/abitofgamedev/pathfinding
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
