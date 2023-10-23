@@ -59,8 +59,7 @@ public class BallisticCannon : Cannon
         terrain = FindFirstObjectByType<Terrain>();
         calculationResult = new BallisticInterceptionResult(null, 1, 0, 0);
         Vector3 angles = transform.rotation.eulerAngles;
-        transform.localRotation = convertRotation(new Vector2(initialAngle.x, 0));
-        transform.Find("himarsLauncherWrapper").localRotation = convertRotation(new Vector2(0, initialAngle.y));
+        transform.Find("himarsLauncherWrapper").localRotation = convertRotation(initialAngle);
     }
 
     Vector3 getCannonDirection(float angleX, float angleY)
@@ -218,14 +217,9 @@ public class BallisticCannon : Cannon
             timeOffset = interceptions[interceptorCount - 1].rotationTime;
             initialRotation = interceptions[interceptorCount - 1].rotation;
         }
-        transform.localRotation = Quaternion.Lerp(
-            convertRotation(new Vector2(initialRotation.x, 0)),
-            convertRotation(new Vector2(interceptions[interceptorCount].rotation.x, 0)),
-            (controller.simulationTime - timeOffset) / (interceptions[interceptorCount].rotationTime - timeOffset)
-        );
         transform.Find("himarsLauncherWrapper").localRotation = Quaternion.Lerp(
-            convertRotation(new Vector2(0, initialRotation.y)),
-            convertRotation(new Vector2(0, interceptions[interceptorCount].rotation.y)),
+            convertRotation(initialRotation),
+            convertRotation(interceptions[interceptorCount].rotation),
             (controller.simulationTime - timeOffset) / (interceptions[interceptorCount].rotationTime - timeOffset)
         );
     }
