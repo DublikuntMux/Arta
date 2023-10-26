@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Shards : MonoBehaviour
 {
-    public BallisticTarget target;
+    public Target target;
     public float speed;
     public float launchOffset;
 
@@ -14,7 +14,7 @@ public class Shards : MonoBehaviour
 
     void Start()
     {
-        controller = GameObject.FindFirstObjectByType<SceneController>();
+        controller = FindFirstObjectByType<SceneController>();
         launchOffset = controller.simulationTime;
     }
 

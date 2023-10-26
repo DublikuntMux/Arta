@@ -31,7 +31,7 @@ public class BallisticInterceptionResult {
 }
 
 
-public class BallisticCannon : MonoBehaviour
+public class BallisticCannon : Cannon
 {
     public float projectileSpeed;
     public float projectileMass;
@@ -47,7 +47,6 @@ public class BallisticCannon : MonoBehaviour
     public float stepFactor;
     public int iterationsPerFrame;
     public float crushCheckTimeDelta;
-    public int interceptorCount {get; private set;}
 
     private SceneController controller;
     private BallisticInterceptionResult calculationResult;
@@ -56,12 +55,11 @@ public class BallisticCannon : MonoBehaviour
     
     void Start()
     {
-        controller = GameObject.FindFirstObjectByType<SceneController>();
-        terrain = GameObject.FindFirstObjectByType<Terrain>();
+        controller = FindFirstObjectByType<SceneController>();
+        terrain = FindFirstObjectByType<Terrain>();
         calculationResult = new BallisticInterceptionResult(null, 1, 0, 0);
         Vector3 angles = transform.rotation.eulerAngles;
-        transform.localRotation = convertRotation(new Vector2(initialAngle.x, 0));
-        transform.Find("himarsLauncherWrapper").localRotation = convertRotation(new Vector2(0, initialAngle.y));
+        transform.Find("himarsLauncherWrapper").localRotation = convertRotation(initialAngle);
     }
 
     Vector3 getCannonDirection(float angleX, float angleY)
@@ -202,6 +200,8 @@ public class BallisticCannon : MonoBehaviour
         if (calculationResult.isInercepted) {
             interceptions.Add(calculationResult);
             Debug.Log(interceptions.Count);
+            Debug.Log(initialRotation);
+            Debug.Log(calculationResult.rotation);
             calculationResult = new BallisticInterceptionResult(null, 1, 0, 0);
         }
     }
@@ -217,22 +217,17 @@ public class BallisticCannon : MonoBehaviour
             timeOffset = interceptions[interceptorCount - 1].rotationTime;
             initialRotation = interceptions[interceptorCount - 1].rotation;
         }
-        transform.localRotation = Quaternion.Lerp(
-            convertRotation(new Vector2(initialRotation.x, 0)),
-            convertRotation(new Vector2(interceptions[interceptorCount].rotation.x, 0)),
-            (controller.simulationTime - timeOffset) / interceptions[interceptorCount].rotationTime
-        );
         transform.Find("himarsLauncherWrapper").localRotation = Quaternion.Lerp(
-            convertRotation(new Vector2(0, initialRotation.y)),
-            convertRotation(new Vector2(0, interceptions[interceptorCount].rotation.y)),
-            (controller.simulationTime - timeOffset) / interceptions[interceptorCount].rotationTime
+            convertRotation(initialRotation),
+            convertRotation(interceptions[interceptorCount].rotation),
+            (controller.simulationTime - timeOffset) / (interceptions[interceptorCount].rotationTime - timeOffset)
         );
     }
 
     void Update()
     {
         if (interceptions.Count < controller.targets.Count) {
-            handleCalculations(controller.targets[interceptions.Count]);
+            handleCalculations((BallisticTarget)controller.targets[interceptions.Count]);
             if (interceptions.Count == controller.targets.Count)
                 controller.startSimulation(interceptions);
         }
